@@ -5,7 +5,7 @@ import sys
 LDI = 0b10000010
 HLT = 0b00000001
 PRN = 0b01000111
-
+MUL = 0b10100010
 
 class CPU:
     """Main CPU class."""
@@ -13,29 +13,52 @@ class CPU:
     def __init__(self):
         """Construct a new CPU."""
         self.ram = [0] * 256
-        self.reg = [0 * 8]
+        self.reg = [0] * 8
         self.pc = 0  # counter
 
-    def load(self):
+    def load(self, filename):
         """Load a program into memory."""
 
         address = 0
 
+
+        #loading from example files
+
+
+
         # For now, we've just hardcoded a program:
 
-        program = [
-            # From print8.ls8
-            0b10000010,  # LDI R0,8
-            0b00000000,
-            0b00001000,
-            0b01000111,  # PRN R0
-            0b00000000,
-            0b00000001,  # HLT
-        ]
+        # program = [
+        #     # From print8.ls8
+        #     0b10000010,  # LDI R0,8
+        #     0b00000000,
+        #     0b00001000,
+        #     0b01000111,  # PRN R0
+        #     0b00000000,
+        #     0b00000001,  # HLT
+        # ]
 
-        for instruction in program:
-            self.ram[address] = instruction
-            address += 1
+        with open(filename) as f:
+            for line in f:
+                line = line.split('#')
+                line = line[0].strip()
+
+                if line == '':
+                    continue
+                
+                self.ram[address] = int(line,2)
+                
+                # print(line)     
+                address +=1
+                
+       
+
+
+
+        # for instruction in program:
+        #     self.ram[address] = instruction
+        #     address += 1
+        
 
     def alu(self, op, reg_a, reg_b):
         """ALU operations."""
@@ -69,39 +92,51 @@ class CPU:
     def run(self):
         """Run the CPU."""
         IR = 0
-
+      
         running = True
         while running is True:
             # get the starting memory
             IR = self.ram[self.pc]
-            print(IR)
-           
+            print(self.pc)
             if IR == HLT:
-                print(IR)
+               
                 running = False
 
             elif IR == LDI:
-             
-                print(LDI)
+           
                 operand_a = self.ram_read(self.pc + 1)
-               
-                print(operand_a)
+                print(operand_a, "LDI A")
+             
                 operand_b = self.ram_read(self.pc + 2)
-                print(operand_b)
+                print(operand_b, "LDI B")
+                print(self.reg)
                 self.reg[operand_a] = operand_b
                 self.pc += 3
 
             elif IR == PRN:
-                print(IR)
+              
                 operand_a = self.ram_read(self.pc + 1)
                 operand_b = self.reg[operand_a]
-                print(operand_b)
+                print(operand_b, "ewfaaewfwa")
                 self.pc += 2
+
+
+            elif IR == MUL:
+                operand_a = self.ram_read(self.pc + 1)
+                operand_b = self.ram_read(self.pc + 2)
+                self.reg[operand_a]= self.reg[operand_a] * self.reg[operand_b]
+                print(self.reg[operand_a], "test")
+                self.pc += 3
+            
+            
+
             else:
                 print("unknown instruction")
                 running = False
+
+            # self.pc += 1
     def ram_read(self, mar):
-        print(self.ram[mar], "test")
+      
         return self.ram[mar]
 
     def ram_write(self, mar, mdr):

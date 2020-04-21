@@ -1,10 +1,16 @@
+import sys
+
 # Write a program in Python that runs programs
+
+# Parse the command line
+program_filename = sys.argv[1]
 
 PRINT_BEEJ = 1
 HALT = 2
 SAVE_REG = 3   # Store a value in a register (in the LS8 called LDI)
 PRINT_REG = 4  # corresponds to PRN in the LS8
 
+"""
 memory = [
 	PRINT_BEEJ,
 
@@ -19,15 +25,35 @@ memory = [
 
 	HALT
 ]
+"""
 
+memory = [0] * 256
 register = [0] * 8   # like variables R0-R7
+
+# Load program into memory
+address = 0
+
+with open(program_filename) as f:
+	for line in f:
+		line = line.split('#')
+		line = line[0].strip()
+
+		if line == '':
+			continue
+
+		memory[address] = int(line)
+
+		address += 1
+
+#print(type(memory[0]))
+#sys.exit()
 
 pc = 0 # Program Counter, the address of the current instruction
 running = True
 
 while running:
 	inst = memory[pc]
-	print(inst)
+
 	if inst == PRINT_BEEJ:
 		print("Beej!")
 		pc += 1
@@ -50,10 +76,4 @@ while running:
 	else:
 		print("Unknown instruction")
 		running = False
-
-
-
-
-
-
 

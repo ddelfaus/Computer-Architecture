@@ -5,7 +5,11 @@
 import sys
 from cpu import *
 
+program_filename = sys.argv[1]
+
 cpu = CPU()
 
-cpu.load()
+cpu.load(program_filename)
+
 cpu.run()
+

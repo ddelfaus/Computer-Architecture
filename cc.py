@@ -22,6 +22,24 @@ def sum_object(data):
     return total
 
 
-print(sum_object(data))
+# print(sum_object(data))
 
-print(data.values())
+# print(data.values())
+
+
+array = [56, 349, 22, -54, 0, 5]
+
+
+def sort_array(array):
+    new_array = []
+    for item in range():
+        if array[item] > array[item + 1]:
+            new_array[item] = array[item+1]
+            new_array[item+1] = array[item]
+        else:
+            new_array.append[item]
+            new_array.append[item + 1]
+    return new_array
+
+
+print(0b1111)
