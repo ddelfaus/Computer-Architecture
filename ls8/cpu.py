@@ -6,7 +6,8 @@ LDI = 0b10000010
 HLT = 0b00000001
 PRN = 0b01000111
 MUL = 0b10100010
-
+PUSH = 0b01000101
+POP = 0b01000110
 class CPU:
     """Main CPU class."""
 
@@ -14,6 +15,8 @@ class CPU:
         """Construct a new CPU."""
         self.ram = [0] * 256
         self.reg = [0] * 8
+        self.SP = 7
+        self.reg[self.SP] = 0xF4
         self.IR = 0
         self.pc = 0  # counter
         self.running = True
@@ -22,7 +25,8 @@ class CPU:
         self.branchtable[PRN] = self.handle_PRN
         self.branchtable[MUL] = self.handle_MUL
         self.branchtable[HLT] = self.handle_HLT
-
+        self.branchtable[PUSH] = self.handle_PUSH
+        self.branchtable[POP] = self.handle_POP
     def handle_LDI(self):
         
         operand_a = self.ram_read(self.pc + 1)         
@@ -36,13 +40,28 @@ class CPU:
     def handle_PRN(self):
         operand_a = self.ram_read(self.pc + 1)
         operand_b = self.reg[operand_a]
-        print(operand_b)
+        print(operand_b, "print")
 
 
     def handle_MUL(self):
         operand_a = self.ram_read(self.pc + 1)
         operand_b = self.ram_read(self.pc + 2)
         self.reg[operand_a]= self.reg[operand_a] * self.reg[operand_b]
+
+
+    def handle_PUSH(self):
+    
+        operand_a = self.ram_read(self.pc + 1)
+        operand_b = self.reg[operand_a]
+        self.reg[self.SP] -= 1
+        self.ram_write(self.reg[self.SP], operand_b)
+     
+     
+    def handle_POP(self):
+        operand_a = self.ram_read(self.pc + 1)
+        operand_b = self.ram_read(self.reg[self.SP])
+        self.reg[operand_a] = operand_b
+        self.reg[self.SP] += 1
     def load(self, filename):
         """Load a program into memory."""
 
@@ -131,12 +150,12 @@ class CPU:
 
             if self.IR in self.branchtable:
                 self.branchtable[self.IR]()
-                print(((self.IR & 0b11000000) >> 6) +1 )
+    
                 pc_len = ((self.IR & 0b11000000) >> 6) + 1
            
                 self.pc += pc_len
 
-
+            
 
             else:
                 print("unknown instruction")

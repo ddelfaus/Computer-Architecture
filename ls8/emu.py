@@ -7,6 +7,8 @@ from cpu import *
 
 program_filename = sys.argv[1]
 
+# "ls8\examples\stack.ls8"
+
 cpu = CPU()
 
 cpu.load(program_filename)
