@@ -42,4 +42,16 @@ def sort_array(array):
     return new_array
 
 
-print(0b1111)
+
+def count(n):
+
+    if n== 0:
+        return
+
+
+
+    count(n-1)
+    print(n)
+    return
+
+count(4)

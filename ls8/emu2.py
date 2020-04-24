@@ -10,10 +10,7 @@ PUSH = 0b01000101
 POP = 0b01000110
 CALL = 0b01010000
 ADD = 0b10100000
-RET = 0b00010001
-
-
-
+sp = 7
 class CPU:
     """Main CPU class."""
 
@@ -21,9 +18,9 @@ class CPU:
         """Construct a new CPU."""
         self.ram = [0] * 256
         self.reg = [0] * 8
-        self.SP = 7
-        self.reg[self.SP] = 0xF4
-        self.IR = 0
+   
+        self.reg[sp] = 0xF4
+       
         self.pc = 0  # counter
         self.running = True
         self.branchtable = {}
@@ -35,83 +32,92 @@ class CPU:
         self.branchtable[PUSH] = self.handle_PUSH
         self.branchtable[POP] = self.handle_POP
         self.branchtable[CALL] = self.handle_CALL
-        self.branchtable[RET] = self.handle_RET
-
     def handle_LDI(self, a, b):
-
-        # operand_a = self.ram_read(self.pc + 1)
-        # operand_b = self.ram_read(self.pc + 2)
+        
+        # operand_a = self.ram_read(self.pc + 1)         
+        # operand_b = self.ram_read(self.pc + 2)      
         self.reg[a] = b
         self.pc += 3
-
     def handle_HLT(self):
         self.running = False
         # self.pc +=1
 
-    def handle_PRN(self, a):
+    def handle_PRN(self, a ):
         # operand_a = self.ram_read(self.pc + 1)
         # operand_b = self.reg[operand_a]
 
+
         print(self.reg[a], "print")
-        self.pc += 2
+        self.pc +=2
 
     def handle_ADD(self, a, b):
         self.reg[a] = self.reg[a] + self.reg[b]
-
-        self.pc += 3
-
+ 
+        self.pc +=3
+        
     def handle_MUL(self, a, b):
         # operand_a = self.ram_read(self.pc + 1)
         # operand_b = self.ram_read(self.pc + 2)
         # self.reg[operand_a]= self.reg[operand_a] * self.reg[operand_b]
         self.reg[a] = self.reg[a] * self.reg[b]
+     
+        self.pc +=3
+        
 
-        self.pc += 3
 
     def handle_PUSH(self, a):
-
+    
         # operand_a = self.ram_read(self.pc + 1)
         # operand_b = self.reg[operand_a]
 
-        self.reg[self.SP] -= 1
-        self.ram[self.reg[self.SP]] = self.reg[a]
+        
+        self.reg[sp] -= 1
+        self.ram[self.reg[sp]] = self.reg[a]
         self.pc += 2
-
+     
+     
     def handle_POP(self, a):
         # operand_a = self.ram_read(self.pc + 1)
-        # operand_b = self.ram_read(self.reg[self.SP])
-        self.reg[a] = self.ram[self.reg[self.SP]]
-        self.reg[self.SP] += 1
+        # operand_b = self.ram_read(self.reg[sp])
+        self.reg[a] =self.ram[self.reg[sp]]
+        self.reg[sp] += 1
         # self.reg[operand_a] = operand_b
-        self.pc += 2
+        self.pc +=2
+     
+
 
     def handle_CALL(self, a):
-        # breakpoint()
-        return_address = self.pc +2
-    
+        # operand_a= self.ram_read(self.pc + 2)
+        
+        ret_adr = self.pc +2
+        print(ret_adr)
+        #push stack 
+        # self.reg[sp] -= 1
         self.pc -= 1
-        self.ram[self.reg[self.SP]] = return_address
+        self.ram[self.reg[sp]] = ret_adr
+        
         self.pc = self.reg[a]
-     
-         # print(operand_a, "test")
-        # to_stack = self.pc + 2
+        print(self.pc , "PC")
 
+        # print(operand_a, "test")
+        # to_stack = self.pc + 2
+     
         # self.IR = operand_a
         # print(self.IR)
-        # return dest_addr
 
-    def handle_RET(self):
+
+        
       
-        self.pc = self.ram[self.reg[self.SP]]
-        self.reg[self.SP] += 1
-
-       
+        # return dest_addr
 
     def load(self, filename):
         """Load a program into memory."""
 
         address = 0
-        # loading from example files
+
+
+        #loading from example files
+
 
 
         # For now, we've just hardcoded a program:
@@ -133,18 +139,22 @@ class CPU:
 
                 if line == '':
                     continue
-
-                self.ram[address] = int(line, 2)
-
+                
+                self.ram[address] = int(line,2)
+                
                 count = count + 1
                 print(line)
                 # print(count)
-                address += 1
+                address +=1
+                
+       
+
 
 
         # for instruction in program:
         #     self.ram[address] = instruction
         #     address += 1
+        
 
     def alu(self, op, reg_a, reg_b):
         """ALU operations."""
@@ -176,111 +186,141 @@ class CPU:
         for i in range(8):
             print(" %02X" % self.reg[i], end='')
 
-    def ram_read(self, mar):
 
+    def ram_read(self, mar):
+      
         return self.ram[mar]
 
     def ram_write(self, mar, mdr):
         self.ram[mar] = mdr
 
+
     def run(self):
         """Run the CPU."""
 
+
         while self.running is True:
-            self.IR = self.ram_read(self.pc)
+            IR = self.ram_read(self.pc)
 
-            operand_a = self.ram_read(self.pc + 1)
-            operand_b = self.ram_read(self.pc + 2)
+            operand_a = self.ram_read(self.pc + 1)         
+            operand_b = self.ram_read(self.pc + 2)  
 
-            operands = self.IR >> 6
 
-            if self.IR in self.branchtable:
-               
+            operands = IR >> 6
+
+            if IR in self.branchtable:
+                print(IR, "IR")
                 if operands == 0:
-                    self.branchtable[self.IR]()
+                    self.branchtable[IR]()
 
                 elif operands == 1:
 
-                    self.branchtable[self.IR](operand_a)
+                    self.branchtable[IR](operand_a)
 
                 elif operands == 2:
 
-                    self.branchtable[self.IR](operand_a, operand_b)
+                    self.branchtable[IR](operand_a, operand_b)
+                    
 
-            else:
-                print("unknown instruction")
+                else:
+                    print("unknown instruction")
+                    
+                    break
 
-                break
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         # while self.running is True:
         #     IR = self.ram[self.pc]
         #     # print(self.IR)
-
+           
         #     if self.IR in self.branchtable:
         #         self.branchtable[self.IR]()
 
         #         pc_len = ((self.IR & 0b11000000) >> 6) + 1
-
+            
         #         self.pc += pc_len
+
+            
 
         #     else:
         #         print("unknown instruction")
         #         running = False
         #         break
-
+       
         # while self.running is True:
         #     self.IR = self.ram_read(self.pc)
         #     print(self.IR)
+
 
         #     if self.IR in self.branchtable:
         #         pc_value = self.branchtable[self.IR]()
         #         if pc_value == None:
         #             pc_len = ((self.IR & 0b11000000) >> 6) + 1
-
+                  
         #             self.pc += pc_len
 
         #         else:
         #             self.pc = pc_value
+            
 
         #     else:
 
         #         print("unknown instruction")
         #         running = False
         #         break
-
+       
+       
+       
         # IR = 0
-
+      
         # running = True
         # while running is True:
         #     # get the starting memory
         #     IR = self.ram[self.pc]
-
+            
         #     if IR == HLT:
-
+               
         #         running = False
 
         #     elif IR == LDI:
-
+           
         #         operand_a = self.ram_read(self.pc + 1)
-
+        
+             
         #         operand_b = self.ram_read(self.pc + 2)
-
+             
+            
         #         self.reg[operand_a] = operand_b
         #         self.pc += 3
 
         #     elif IR == PRN:
-
+              
         #         operand_a = self.ram_read(self.pc + 1)
         #         operand_b = self.reg[operand_a]
         #         print(operand_b)
         #         self.pc += 2
+
 
         #     elif IR == MUL:
         #         operand_a = self.ram_read(self.pc + 1)
         #         operand_b = self.ram_read(self.pc + 2)
         #         self.reg[operand_a]= self.reg[operand_a] * self.reg[operand_b]
         #         self.pc += 3
+            
+            
 
         #     else:
         #         print("unknown instruction")
