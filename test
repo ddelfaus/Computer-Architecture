@@ -1,0 +1,71 @@
+bases = number of digits avaible
+    example decimal has 0-9 
+    binary has 2 0, 1
+    hexadecimal has 16  0-9, a-f
+
+
+byte 8 bits
+    max 255 decimal
+    max ff hexadecimal
+
+
+
+64
+
+
+00000000
+  110111
+ 1101111
+
+
+01111111
+
+64 + 32 + 16+ 8 + 2 + 1
+
+
+
+
+1010      1010
+
+
+
+1010  0011
+
+
+
+ f   7
+11110111
+
+
+ 1100   0111
+ 1100 0111    
+
+
+A     3
+        11
+1 1010 1010
+ 1   9    9    
+ bitwise operations
+
+A B C  3
+10101011  11000011
+
+ 0 = false and 1 = true
+
+
+11011111
+00010111
+
+and both have to be true
+not and both have to false
+
+or one true
+nor both false
+
+
+
+
+0 0
+0   
+0
+1

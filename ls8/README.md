@@ -60,6 +60,17 @@ but you'll have to implement those three above instructions first!
 ## Step 0: IMPORTANT: inventory what is here!
 
 * Make a list of files here.
+  call.ls8 call is a function that is stored in the register with an address which will pull something from the memory 
+  interrupts.ls8 alerts the processor that something needs immediate attention
+  keyboard.ls8 input device
+  mult.ls8 multiplying numbers
+  print8 prints the number 8
+  printstr prints a string
+  sctest.ls8 not sure
+  stack.ls8 top of the stack is handle first which is the last item added
+  stack overflow - handles when too many things in stack
+  cpu executes instructions
+  is8.py is the emulator that is being worked on
 * Write a short 3-10-word description of what each file does.
 * Note what has been implemented, and what hasn't.
 * Read this whole file.
